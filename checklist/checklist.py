@@ -1,6 +1,9 @@
 # CREATE CHECKLIST
 checklist = list()
 
+# CREATE RUNNING BOOLEAN
+running = True
+
 # DEFINE FUNCTIONS
 # create
 
@@ -45,33 +48,55 @@ def user_input(prompt):
 
 
 def select(function_code):
-    # Create item
-    if function_code == "C":
-        input_item = user_input("Input item:")
-        create(input_item)
+    try:
+        # Create item
+        if (function_code == "A") | (function_code == "a"):
+            input_item = user_input("Add to list:")
+            create(input_item)
 
-    # Read item
-    elif function_code == "R":
-        item_index = int(user_input("Index Number?"))
+        # Read item
+        elif (function_code == "R") | (function_code == "r"):
+            item_index = int(user_input("Which item?\n"))
+            print(read(item_index))
+        
+        # Destroy item
+        elif (function_code == "D") | (function_code == "d"):
+            item_index = int(user_input("Which item to destroy?\n"))
+            destroy(item_index)
+            
+        # Print all items
+        elif (function_code == "P") | (function_code == "p"):
+            list_all_items()
 
-        # Remember that item_index must actually exist or our program will crash.
-        read(item_index)
+        # Update item
+        elif (function_code == "U") | (function_code == "u"):
+            item_index = int(user_input("What item to update?\n"))
+            update_item = user_input("What to update it to?\n")
+            update(input_item, update_item)
 
-    # Print all items
-    elif function_code == "P":
-        list_all_items()
+        # Check item
+        elif (function_code == "C") | (function_code == "c"):
+            item_index = int(user_input("What item to complete? \n"))
+            if item_index < len(checklist):
+                if checklist[item_index][0] != "√":
+                    mark_completed(item_index)
+                else:
+                    print("You've already completed that item")
+            else:
+                print("Invalid input")
 
-    # Quit function
-    elif function_code == "Q":
-        return False
+        # Quit function
+        elif (function_code == "Q") | (function_code == "q"):
+            return False
 
-    # Catch all
-    else:
-        print("Unknown Option")
+        # Catch all
+        else:
+            print("Invalid input.")
+
+    except:
+        print("Invalid input.")
 
 # print items
-
-
 def list_all_items():
     index = 0
     for list_item in checklist:
@@ -138,6 +163,8 @@ def test():
 running = True
 while running:
     selection = user_input(
-        "Press C to add to list, R to Read from list and P to display list"
+        "Press A to Add to list, R to Read item, D to Destroy item, U to Update item,\n C to mark as Completed, P to show the list, and Q to Quit\n"
     )
-    select(selection)
+    if not select(selection):
+        running = False
+
