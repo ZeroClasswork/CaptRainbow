@@ -1,3 +1,6 @@
+# IMPORTS FOR CHECKING OS TO CLEAR SCREEN
+import subprocess, platform
+
 # CREATE CHECKLIST
 checklist = list()
 
@@ -6,38 +9,26 @@ running = True
 
 # DEFINE FUNCTIONS
 # create
-
-
 def create(item):
     checklist.append(item)
 
 # read
-
-
 def read(index):
     return checklist[index]
 
 # update
-
-
 def update(index, item):
     checklist[index] = item
 
 # destroy
-
-
 def destroy(index):
     checklist.pop(index)
 
 # mark items as completed
-
-
 def mark_completed(index):
     checklist[index] = "√ " + checklist[index]
 
 # recieve input from user
-
-
 def user_input(prompt):
     # the input function will display a message in the terminal
     # and wait for user input.
@@ -50,32 +41,42 @@ def user_input(prompt):
 def select(function_code):
     try:
         # Create item
-        if (function_code == "A") | (function_code == "a"):
+        if (function_code.upper() == "A"):
             input_item = user_input("Add to list:")
             create(input_item)
 
         # Read item
-        elif (function_code == "R") | (function_code == "r"):
+        elif (function_code.upper() == "R"):
             item_index = int(user_input("Which item?\n"))
             print(read(item_index))
+            user_response = "no"
+            while not ((user_response.upper() == "Y") | (user_response.upper() == "YES")):
+                user_response = user_input("Continue?")
         
         # Destroy item
-        elif (function_code == "D") | (function_code == "d"):
+        elif (function_code.upper() == "D"):
             item_index = int(user_input("Which item to destroy?\n"))
             destroy(item_index)
             
         # Print all items
-        elif (function_code == "P") | (function_code == "p"):
+        elif (function_code.upper() == "P"):
             list_all_items()
+            user_response = "no"
+            while not ((user_response.upper() == "Y") | (user_response.upper() == "YES")):
+                user_response = user_input("Continue?")
+                
 
         # Update item
-        elif (function_code == "U") | (function_code == "u"):
+        elif (function_code.upper() == "U"):
             item_index = int(user_input("What item to update?\n"))
+            while item_index >= len(checklist):
+                print("Invalid input.")
+                item_index = int(user_input("What item to update?\n"))
             update_item = user_input("What to update it to?\n")
             update(input_item, update_item)
 
         # Check item
-        elif (function_code == "C") | (function_code == "c"):
+        elif (function_code.upper() == "C"):
             item_index = int(user_input("What item to complete? \n"))
             if item_index < len(checklist):
                 if checklist[item_index][0] != "√":
@@ -86,22 +87,44 @@ def select(function_code):
                 print("Invalid input")
 
         # Quit function
-        elif (function_code == "Q") | (function_code == "q"):
+        elif (function_code.upper() == "Q"):
             return False
 
         # Catch all
         else:
             print("Invalid input.")
 
+        if platform.system() == "Windows":  # Windows
+            subprocess.Popen("cls", shell=True).communicate()
+        else:                               # Linux and Mac
+            print("\033c", end="")
+
+        return True
+
     except:
         print("Invalid input.")
+
+        user_response = "no"
+        while not ((user_response.upper() == "Y") | (user_response.upper() == "YES")):
+                user_response = user_input("Continue?")
+
+        if platform.system() == "Windows":  # Windows
+            subprocess.Popen("cls", shell=True).communicate()
+        else:                               # Linux and Mac
+            print("\033c", end="")
+
+        return True
 
 # print items
 def list_all_items():
     index = 0
-    for list_item in checklist:
-        print(str(index) + ": " + list_item)
-        index += 1
+    if len(checklist) > 0:
+        for list_item in checklist:
+            print(str(index) + ": " + list_item)
+            index += 1
+
+    else:
+        print("Nothing to display.")
 
 
 def test():
@@ -165,6 +188,7 @@ while running:
     selection = user_input(
         "Press A to Add to list, R to Read item, D to Destroy item, U to Update item,\n C to mark as Completed, P to show the list, and Q to Quit\n"
     )
+
     if not select(selection):
         running = False
 
