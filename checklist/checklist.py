@@ -1,6 +1,8 @@
 # IMPORTS FOR CHECKING OS TO CLEAR SCREEN
-import subprocess
-import platform
+import subprocess, platform
+
+# IMPORT TO USE RNG
+import random
 
 # CREATE CHECKLIST
 checklist = list()
@@ -8,12 +10,24 @@ checklist = list()
 # CREATE RUNNING BOOLEAN
 running = True
 
+# CREATING RAINBOW OF TEXT OPTIONS
+END = "\33[0m"
+ALTEND = "\33"
+RED = "\33[31m"
+YELLOW = "\33[33m"
+GREEN = "\33[32m"
+BLUE = "\33[34m"
+VIOLET = "\33[35m"
+GREY = "\33[90m"
+rainbow = [RED, YELLOW, GREEN, BLUE, VIOLET]
+
 # DEFINE FUNCTIONS
 # create
 
 
 def create(item):
-    checklist.append("  " + item)
+    color = random.choice(rainbow)
+    checklist.append(color + "  " + item + END)
 
 # read
 
@@ -40,7 +54,22 @@ def mark_completed(index):
     if checklist[index][0] == "√":
         checklist[index] = " " + str(checklist[index][1:])
     elif checklist[index][0] != "√":
-        checklist[index] = "√" + str(checklist[index][1:])
+        checklist[index] = YELLOW + "√" + ALTEND + str(checklist[index][1:])
+
+
+# print items
+
+
+def list_all_items():
+    index = 0
+    if len(checklist) > 0:
+        for list_item in checklist:
+            color = random.choice(rainbow)
+            print(color + str(index) + ": " + str(list_item) + END)
+            index += 1
+
+    else:
+        print(GREY + "Nothing to display." + END)
 
 # recieve input from user
 
@@ -58,21 +87,21 @@ def select(function_code):
     try:
         # Create item
         if (function_code.upper() == "A"):
-            input_item = user_input("Add to list:")
+            input_item = user_input(RED + "Add to list:" + END)
             create(input_item)
 
         # Read item
         elif (function_code.upper() == "R"):
-            item_index = int(user_input("Which item?\n"))
-            print(str(item_index) + ": " + read(item_index))
+            item_index = int(user_input(YELLOW + "Which item?\n" + END))
+            print(RED + str(item_index) + GREYBG + ": " + END + read(item_index) + END)
             
             user_response = "no"
             while not ((user_response.upper() == "Y") or (user_response.upper() == "YES")):
-                user_response = user_input("Continue?")
+                user_response = user_input(GREY + "Continue?\n" + END)
 
         # Destroy item
         elif (function_code.upper() == "D"):
-            item_index = int(user_input("Which item to destroy?\n"))
+            item_index = int(user_input(GREEN + "Which item to destroy?\n" + END))
             destroy(item_index)
 
         # Print all items
@@ -80,25 +109,25 @@ def select(function_code):
             list_all_items()
             user_response = "no"
             while not ((user_response.upper() == "Y") or (user_response.upper() == "YES")):
-                user_response = user_input("Continue?")
+                user_response = user_input(GREY + "Continue?\n" + END)
 
         # Update item
         elif (function_code.upper() == "U"):
-            item_index = int(user_input("What item to update?\n"))
+            item_index = int(user_input(BLUE + "What item to update?\n" + END))
             while item_index >= len(checklist):
-                print("Invalid input.")
-                item_index = int(user_input("What item to update?\n"))
-            update_item = user_input("What to update it to?\n")
+                print(GREY + "Invalid input." + END )
+                item_index = int(user_input(BLUE + "What item to update?\n" + END))
+            update_item = user_input(BLUE + "What to update it to?\n" + END)
             update(item_index, update_item)
 
         # Check item
         elif (function_code.upper() == "C"):
-            item_index = int(user_input(
-                "What item to complete / uncomplete? \n"))
+            item_index = int(user_input(VIOLET + 
+                "What item to complete / uncomplete? \n" + END))
             if item_index < len(checklist):
                 mark_completed(item_index)
             else:
-                print("Invalid input")
+                print(GREEN + "Invalid input" + END)
 
         # Quit function
         elif (function_code.upper() == "Q"):
@@ -112,11 +141,11 @@ def select(function_code):
 
         # Catch all
         else:
-            print("Invalid input.")
+            print(GREY + "Invalid input." + END)
 
             user_response = "no"
             while not ((user_response.upper() == "Y") or (user_response.upper() == "YES")):
-                user_response = user_input("Continue?")
+                user_response = user_input(GREY + "Continue?\n" + END)
 
         if platform.system() == "Windows":  # Windows
             subprocess.Popen("cls", shell=True).communicate()
@@ -130,7 +159,7 @@ def select(function_code):
 
         user_response = "no"
         while not ((user_response.upper() == "Y") or (user_response.upper() == "YES")):
-            user_response = user_input("Continue?")
+            user_response = user_input(GREY + "Continue?\n" + END)
 
         if platform.system() == "Windows":  # Windows
             subprocess.Popen("cls", shell=True).communicate()
@@ -138,20 +167,6 @@ def select(function_code):
             print("\033c", end="")
 
         return True
-
-# print items
-
-
-def list_all_items():
-    index = 0
-    if len(checklist) > 0:
-        for list_item in checklist:
-            print(str(index) + ": " + list_item)
-            index += 1
-
-    else:
-        print("Nothing to display.")
-
 
 def test():
     create("purple sox")
@@ -212,7 +227,10 @@ def test():
 running = True
 while running:
     selection = user_input(
-        "Press A to Add to list, R to Read item, D to Destroy item, U to Update item,\n C to mark as Completed / unCompleted, P to show the list, and Q to Quit\n"
+        RED + "Press A to Add to list," + YELLOW + " R to Read item, " + 
+        GREEN + " D to Destroy item," + BLUE + " U to Update item,\n " + 
+        VIOLET + "C to mark as Completed / unCompleted," +
+        GREY + " P to show the list, and Q to Quit\n" + END
     )
 
     if not select(selection):
