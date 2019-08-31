@@ -61,20 +61,21 @@ def select(function_code):
             input_item = user_input("Add to list:")
             create(input_item)
 
-            # Read item
+        # Read item
         elif (function_code.upper() == "R"):
             item_index = int(user_input("Which item?\n"))
-            print(read(item_index))
+            print(str(item_index) + ": " + read(item_index))
+            
             user_response = "no"
             while not ((user_response.upper() == "Y") or (user_response.upper() == "YES")):
                 user_response = user_input("Continue?")
 
-            # Destroy item
+        # Destroy item
         elif (function_code.upper() == "D"):
             item_index = int(user_input("Which item to destroy?\n"))
             destroy(item_index)
 
-            # Print all items
+        # Print all items
         elif (function_code.upper() == "P"):
             list_all_items()
             user_response = "no"
@@ -117,10 +118,10 @@ def select(function_code):
             while not ((user_response.upper() == "Y") or (user_response.upper() == "YES")):
                 user_response = user_input("Continue?")
 
-            if platform.system() == "Windows":  # Windows
-                subprocess.Popen("cls", shell=True).communicate()
-            else:                               # Linux and Mac
-                print("\033c", end="")
+        if platform.system() == "Windows":  # Windows
+            subprocess.Popen("cls", shell=True).communicate()
+        else:                               # Linux and Mac
+            print("\033c", end="")
 
         return True
 
